@@ -1,26 +1,27 @@
-const throttleFnTimeBased = (fn, delay) => {
-  let lastExecuted = null;
-  let timerId = null;
-  return function (...args) {
-    if (!lastExecuted) {
-      fn.apply(this, args);
-      lastExecuted = Date.now();
-    } else {
-      // remove previous timer
-      clearTimeout(timerId);
-
-      // create new timer remaning time
-      timerId = setTimeout(() => {
-        if (Date.now() - lastExecuted >= delay) {
-          fn.apply(this, args);
-          lastExecuted = Date.now();
+function throttlePls(fn,delay){
+    let lastExecutedTime=null;
+    let timerId=null;
+    
+    return function(...args){
+        if(!lastExecutedTime){
+            fn.apply(this,args)
+            lastExecutedTime=Date.now()
         }
-      }, delay - (Date.now() - lastExecuted));
+        else {
+            clearTimeout(timerId)
+            timerId=setTimeout(()=>{
+    
+                if(Date.now()-lastExecutedTime >=delay)
+                {fn.apply(this,args)
+                 lastExecutedTime=Date.now()}
+            },delay-(Date.now()-lastExecutedTime))
+           
+        }
     }
-  };
-};
-const throttledFunction = throttleFnTimeBased((msg) => {
-  console.log(msg, Date.now());
+}
+
+const throttledFunction = throttlePls((msg) => {
+  console.log(msg);
 }, 2000);
 
 throttledFunction("Call 1"); // Executes immediately
