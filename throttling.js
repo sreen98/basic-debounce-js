@@ -1,26 +1,34 @@
-function debounce(fn, delay) {
-    let timeout;
-  
-    return function (...args) {
-      const context = this;
-      clearTimeout(timeout);
-  
-      // Set a new timeout to call the function after the delay
-      timeout = setTimeout(() => {
-        fn.apply(context, args);
-      }, delay);
-    };
-  }
-  const fn = debounce((message) => {
-    console.log(message);
-  }, 300);
-  
-  // Simulate rapid function calls
-  fn("Hello");
-  fn("Hello, World!");
-  fn("Hello, World!");
-  fn("Debounced!"); // Only this should log after 300ms
-  
-  setTimeout(() => {
-    fn("Debounced twice");
-  }, 400);
+const throttleFnTimeBased = (fn, delay) => {
+  let lastExecuted = null;
+  let timerId = null;
+  return function (...args) {
+    if (!lastExecuted) {
+      fn.apply(this, args);
+      lastExecuted = Date.now();
+    } else {
+      // remove previous timer
+      clearTimeout(timerId);
+
+      // create new timer remaning time
+      timerId = setTimeout(() => {
+        if (Date.now() - lastExecuted >= delay) {
+          fn.apply(this, args);
+          lastExecuted = Date.now();
+        }
+      }, delay - (Date.now() - lastExecuted));
+    }
+  };
+};
+const throttledFunction = throttleFnTimeBased((msg) => {
+  console.log(msg, Date.now());
+}, 2000);
+
+throttledFunction("Call 1"); // Executes immediately
+throttledFunction("Call 2"); // Throttled
+throttledFunction("Call 3"); // Throttled
+
+setTimeout(() => throttledFunction("Call 4"), 1100);
+// Executes after 1.1 seconds
+setTimeout(() => throttledFunction("Call 5"), 900);
+// throttle
+setTimeout(() => throttledFunction("Call 6"), 2100);
