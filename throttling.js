@@ -1,21 +1,17 @@
 function throttlePls(fn,delay){
-    let lastExecutedTime=null;
-    let timerId=null;
-    
+    let timerId  =null, lastExecutedTime =null;
     return function(...args){
         if(!lastExecutedTime){
-            fn.apply(this,args)
+            fn.apply(this,args);
             lastExecutedTime=Date.now()
-        }
-        else {
-            clearTimeout(timerId)
+        }else{
+            clearTimeout(timerId);
             timerId=setTimeout(()=>{
-    
-                if(Date.now()-lastExecutedTime >=delay)
-                {fn.apply(this,args)
-                 lastExecutedTime=Date.now()}
-            },delay-(Date.now()-lastExecutedTime))
-           
+                if(Date.now()-lastExecutedTime >=delay){
+                    fn.apply(this,args);
+                    lastExecutedTime=Date.now();
+                }
+            }, delay-(Date.now()-lastExecutedTime))
         }
     }
 }
